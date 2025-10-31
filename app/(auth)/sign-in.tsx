@@ -1,36 +1,60 @@
+import { isClerkAPIResponseError, useSSO } from "@clerk/clerk-expo";
+import * as AuthSession from "expo-auth-session";
 import { useRouter } from "expo-router";
-import { LogIn } from "lucide-react-native";
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function SignIn() {
+export default function SignInScreen() {
+  const { startSSOFlow } = useSSO();
   const router = useRouter();
+
+  // Connexion avec Google via Clerk
+  const onSignInWithGoogle = async () => {
+    try {
+      const { createdSessionId, setActive } = await startSSOFlow({
+        strategy: "oauth_google",
+        redirectUrl: AuthSession.makeRedirectUri(),
+      });
+
+      if (createdSessionId) {
+        console.log("Session créée ", createdSessionId);
+        await setActive!({ session: createdSessionId });
+        router.replace("/(user)"); // Redirection après connexion
+      } else {
+        console.log("Aucune session créée");
+      }
+    } catch (error) {
+      if (isClerkAPIResponseError(error)) {
+        console.log("Erreur Clerk ", error);
+      } else {
+        console.log("Erreur inattendue ", error);
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Proxima</Text>
       <Text style={styles.subtitle}>
-        Localiser le magasin le plus proche {"\n"}et reconnaître les articles à
-        partir d’images
+        Localiser le magasin le plus proche {"\n"}et reconnaître les articles à partir d’images
       </Text>
-
       <View style={styles.imagesRow}>
         <Image source={require("@/assets/images/polo.png")} style={styles.image} />
         <Image source={require("@/assets/images/polo.png")} style={styles.image} />
         <Image source={require("@/assets/images/polo.png")} style={styles.image} />
       </View>
-
-      <TouchableOpacity
-        style={styles.googleButton}
-        onPress={() => router.push("/(user)")}
-      >
-        <LogIn color="black" size={20} />
+      <TouchableOpacity style={styles.googleButton} onPress={onSignInWithGoogle}>
+        <Image
+          source={require("@/assets/images/google-icon.png")}
+          style={styles.googleLogo}
+        />
         <Text style={styles.googleText}>Se connecter avec Google</Text>
       </TouchableOpacity>
-
-      <Text style={styles.footer}>
-        Si vous n’avez pas de compte, inscrivez-vous
-      </Text>
+      <TouchableOpacity onPress={() => router.push("/(auth)/sign-up")}>
+        <Text style={styles.footer}>
+          Si vous n’avez pas de compte, inscrivez-vous
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -55,6 +79,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 20,
   },
-  googleText: { marginLeft: 10, fontWeight: "600" },
-  footer: { color: "#4a90e2", fontSize: 12 },
+  googleLogo: {
+    width: 22,
+    height: 22,
+    marginRight: 10,
+  },
+  googleText: { fontWeight: "600" },
+  footer: { color: "#2b93d1", fontSize: 14 },
 });

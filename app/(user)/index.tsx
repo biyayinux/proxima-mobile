@@ -7,7 +7,6 @@ export default function UserHome() {
   return (
     <View style={styles.container}>
       <Header title="Proxima" />
-
       <ScrollView style={{ flex: 1 }}>
         <Text style={styles.sectionTitle}>Nos articles</Text>
         <View style={styles.articleRow}>
@@ -22,7 +21,6 @@ export default function UserHome() {
             <Text>10 USD</Text>
           </View>
         </View>
-
         <Text style={styles.sectionTitle}>Les magasins les plus proches de toi</Text>
         <View style={styles.storeCard}>
           <Image source={require("@/assets/images/polo.png")} style={styles.storeImage} />
@@ -30,7 +28,6 @@ export default function UserHome() {
           <Text>26 articles</Text>
         </View>
       </ScrollView>
-
       <Navbar />
     </View>
   );
