@@ -1,68 +1,83 @@
-import { useRouter } from "expo-router";
-import React from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useMagasinsUser } from '@/hooks/magasins/magasins-user';
+import { formatDateFr } from '@/utils/format-date';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+
+const base64ToUri = (b64?: string | null) => (b64 ? `data:image/jpeg;base64,${b64}` : null);
 
 export default function MagasinsIndex() {
   const router = useRouter();
+  const query = useMagasinsUser();
+
+  if (query.isLoading)
+    return <ActivityIndicator size="large" color="#000" style={{ marginTop: 30 }} />;
+  if (query.error)
+    return <Text style={styles.error}>{query.error.message}</Text>;
+
+  const { magasins = [], totalMagasins = 0, totalArticles = 0 } = query.data || {};
 
   return (
     <View style={styles.container}>
-      <ScrollView style={{ flex: 1 }}>
-        <Text style={styles.stats}>12 Magasins{"\n"}360 Articles</Text>
-        <TouchableOpacity
-          style={styles.createButton}
-          onPress={() => router.push("/(user)/add-magasin")}
-        >
-          <Text style={styles.createText}>Créer un magasin</Text>
-        </TouchableOpacity>
-        <View style={styles.storeCard}>
-          <Text style={styles.storeTitle}>Magasin 1</Text>
-          <Image source={require("@/assets/images/polo.png")} style={styles.storeImage} />
-          <View style={styles.storeFooter}>
-            <TouchableOpacity
-              style={styles.viewButton}
-              onPress={() => router.push("/(user)/(magasins)/1")}
-            >
-              <Text>Voir +</Text>
-            </TouchableOpacity>
-            <Text>26 articles</Text>
-          </View>
-        </View>
+      <View style={styles.stats}>
+        <Text style={styles.stat}>{totalMagasins} Magasins</Text>
+        <Text style={styles.stat}>{totalArticles} Articles</Text>
+      </View>
+      <Pressable style={styles.createBtn} onPress={() => router.push("/(user)/add-magasin")}>
+        <Text style={styles.createText}>+ Créer un magasin</Text>
+      </Pressable>
+      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        {magasins.map((m: any) => (
+          <Pressable
+            key={m.id}
+            style={styles.card}
+            onPress={() => router.push(`/(user)/(magasins)/${m.id}`)}
+          >
+            {m.logo ? (
+              <Image source={{ uri: base64ToUri(m.logo)! }} style={styles.img} />
+            ) : (
+              <View style={[styles.img, styles.noLogo]}>
+                <Text style={styles.noLogoTxt}>Aucun logo</Text>
+              </View>
+            )}
+            <View style={styles.label}>
+              <Text style={styles.name}>{m.nom}</Text>
+              <Text style={styles.date}>{formatDateFr(m.dt || m.created_at)}</Text>
+            </View>
+          </Pressable>
+        ))}
       </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff", paddingHorizontal: 20 },
-  stats: { fontSize: 16, marginVertical: 10 },
-  createButton: {
-    alignSelf: "flex-end",
-    backgroundColor: "#f2f2f2",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    marginBottom: 15,
-  },
-  createText: { fontWeight: "500" },
-  storeCard: {
-    backgroundColor: "#f8f8f8",
+  container: { flex: 1, backgroundColor: '#fff', padding: 20 },
+  stats: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 15 },
+  stat: { fontWeight: 'bold', fontSize: 15 },
+  createBtn: { backgroundColor: '#000', padding: 10, borderRadius: 8, marginBottom: 15 },
+  createText: { color: '#fff', fontWeight: 'bold', textAlign: 'center' },
+  error: { color: 'red', textAlign: 'center', marginTop: 20 },
+  card: {
+    marginRight: 15,
+    width: 150,
+    height: 180,
     borderRadius: 12,
-    padding: 15,
-    alignItems: "center",
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+    elevation: 2,
   },
-  storeTitle: { fontWeight: "bold", marginBottom: 8 },
-  storeImage: { width: 100, height: 100, borderRadius: 10, marginBottom: 10 },
-  storeFooter: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "80%",
-    alignItems: "center",
+  img: { width: '100%', height: '100%' },
+  noLogo: { justifyContent: 'center', alignItems: 'center', backgroundColor: '#eee' },
+  noLogoTxt: { color: '#777', fontSize: 12 },
+  label: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 5,
   },
-  viewButton: {
-    backgroundColor: "#e6e6e6",
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-  },
+  name: { color: '#fff', fontWeight: 'bold', fontSize: 13 },
+  date: { color: '#fff', fontSize: 11 },
 });

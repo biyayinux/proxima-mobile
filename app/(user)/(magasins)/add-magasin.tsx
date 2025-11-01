@@ -15,34 +15,26 @@ export default function AddMagasinPage() {
   const [logo, setLogo] = useState<string | null>(null);
   const [positionRetrieved, setPositionRetrieved] = useState(false);
 
-  // Choisir une image
   const handlePickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 0.8,
     });
-
-    if (!result.canceled && result.assets?.length) {
-      setLogo(result.assets[0].uri);
-    }
+    if (!result.canceled && result.assets?.length) setLogo(result.assets[0].uri);
   };
 
-  // Récupérer la position GPS
   const handleGetLocation = async () => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') return;
-
     const loc = await Location.getCurrentPositionAsync({});
     setLatitude(loc.coords.latitude.toString());
     setLongitude(loc.coords.longitude.toString());
     setPositionRetrieved(true);
   };
 
-  // Créer le magasin
   const handleAddMagasin = async () => {
     if (!nom || !latitude || !longitude) return;
-
     const data = await addMagasin({ nom, latitude, longitude, logo });
     if (data?.id) router.push(`/(user)/(magasins)/${data.id}`);
   };
@@ -51,11 +43,7 @@ export default function AddMagasinPage() {
     <View style={styles.container}>
       <TouchableOpacity style={styles.logoButton} onPress={handlePickImage}>
         <Image
-          source={
-            logo
-              ? { uri: logo } // Image sélectionnée
-              : require('@/assets/images/polo.png') // Image par défaut
-          }
+          source={logo ? { uri: logo } : require('@/assets/images/polo.png')}
           style={styles.logoImage}
         />
       </TouchableOpacity>
@@ -71,11 +59,11 @@ export default function AddMagasinPage() {
         </Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.submitButton, loading && { backgroundColor: '#999' }]}
+        style={[styles.button, loading && { opacity: 0.6 }]}
         onPress={handleAddMagasin}
         disabled={loading}
       >
-        <Text style={styles.submitButtonText}>{loading ? 'Création...' : 'Créer le magasin'}</Text>
+        <Text style={styles.buttonText}>{loading ? 'Création...' : 'Créer le magasin'}</Text>
       </TouchableOpacity>
       {error && <Text style={styles.error}>{error}</Text>}
     </View>
@@ -83,13 +71,11 @@ export default function AddMagasinPage() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, justifyContent: 'center' },
+  container: { flex: 1, padding: 20, justifyContent: 'center', backgroundColor: '#fff' },
   logoButton: { alignSelf: 'center', marginBottom: 15 },
-  logoImage: { width: 100, height: 100, borderRadius: 10 },
-  input: { borderWidth: 1, borderColor: '#ccc', padding: 10, borderRadius: 8, marginBottom: 15 },
+  logoImage: { width: 100, height: 100, borderRadius: 10, borderWidth: 1, borderColor: '#000' },
+  input: { borderWidth: 1, borderColor: '#000', padding: 10, borderRadius: 8, marginBottom: 15, color: '#000' },
   button: { backgroundColor: '#000', padding: 12, borderRadius: 8, marginBottom: 10, alignItems: 'center' },
   buttonText: { color: '#fff', fontWeight: 'bold' },
-  submitButton: { backgroundColor: '#000', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 10 },
-  submitButtonText: { color: '#fff', fontWeight: 'bold' },
-  error: { color: 'red', marginTop: 10 },
+  error: { color: 'red', marginTop: 10, textAlign: 'center' },
 });

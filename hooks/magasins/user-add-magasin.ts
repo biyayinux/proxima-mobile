@@ -34,7 +34,7 @@ export function useAddMagasin() {
           nom,
           latitude: parseFloat(latitude),
           longitude: parseFloat(longitude),
-          logo: base64Logo ? `data:image/jpeg;base64,${base64Logo}` : null,
+          logo: base64Logo ? `${base64Logo}` : null,
           email: user.primaryEmailAddress.emailAddress,
         }),
       });
