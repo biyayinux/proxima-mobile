@@ -5,11 +5,8 @@ import * as SecureStore from "expo-secure-store";
 import React from "react";
 
 const queryClient = new QueryClient();
-
-// Clé Clerk
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
-// Création du tokenCache sécurisé
 const tokenCache = {
   getToken: (key: string) => SecureStore.getItemAsync(key),
   saveToken: (key: string, value: string) => SecureStore.setItemAsync(key, value),
@@ -19,25 +16,20 @@ const tokenCache = {
 function RootLayout() {
   const { isSignedIn } = useUser();
 
-  if (isSignedIn === undefined) {
-
-    // Attente du chargement de Clerk
-    return null;
-  }
+  if (isSignedIn === undefined) return null;
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {!isSignedIn && (
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      )}
-      {isSignedIn && (
-        <Stack.Screen name="(user)" options={{ headerShown: false }} />
-      )}
+      {isSignedIn ? <Stack.Screen name="(user)" /> : <Stack.Screen name="(auth)" />}
     </Stack>
   );
 }
 
 export default function Layout() {
+  if (!CLERK_PUBLISHABLE_KEY) {
+    throw new Error("La clé publiable Clerk n'est pas définie");
+  }
+
   return (
     <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
       <QueryClientProvider client={queryClient}>
