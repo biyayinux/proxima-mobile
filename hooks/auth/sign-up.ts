@@ -43,7 +43,6 @@ export function useSignUpWithGoogle() {
 
       const email = user.emailAddresses?.[0]?.emailAddress;
       const noms = `${user.firstName || ""} ${user.lastName || ""}`.trim();
-      const url_image = user.profileImageUrl || "";
 
       if (!email || !noms) {
         console.log("Email manquant");
@@ -55,11 +54,11 @@ export function useSignUpWithGoogle() {
         const response = await fetch(`${MIDDLEWARE_URL}/api/users/sign-up`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, noms, url_image }),
+          body: JSON.stringify({ email, noms }),
         });
 
         const data = await response.json();
-        console.log("Réponse middleware :", data);
+        console.log("Réponse middleware ", data);
 
         if (response.ok && (data.status === "created" || data.status === "updated")) {
           router.replace("/(user)"); // Redirection vers page user
