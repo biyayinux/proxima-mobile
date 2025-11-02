@@ -1,13 +1,15 @@
 import { useMagasinUser } from "@/hooks/magasins/id-magasin-user";
-import { useLocalSearchParams } from "expo-router";
+import { formatDateFr } from "@/utils/format-date";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
-const base64ToUri = (b64?: string | null) => (b64 ? `data:image/jpeg;base64,${b64}` : null);
+const base64ToUri = (b64?: string | null) => b64 ? `data:image/jpeg;base64,${b64}` : null;
 
 export default function MagasinDetail() {
   const { id } = useLocalSearchParams();
+  const router = useRouter();
   const { data, isLoading, error } = useMagasinUser(id as string);
 
   if (isLoading || error)
@@ -22,7 +24,7 @@ export default function MagasinDetail() {
   const articles = data?.articles || [];
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 80 }}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
       <MapView
         style={styles.map}
         initialRegion={{
@@ -54,6 +56,12 @@ export default function MagasinDetail() {
         <Text style={styles.storeName}>{magasin?.nom}</Text>
         <Text style={styles.articleCount}>{articles.length} articles</Text>
       </View>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => router.push(`/(user)/(articles)/add-article?id=${id}`)}
+      >
+        <Text style={styles.addButtonText}>+ Ajouter un article</Text>
+      </TouchableOpacity>
       {articles.length > 0 ? (
         <View style={styles.articlesRow}>
           {articles.map((a: any) => (
@@ -70,7 +78,7 @@ export default function MagasinDetail() {
               <Text style={styles.articlePrice}>
                 {a.prix} {a.devise}
               </Text>
-              <Text style={styles.articleDate}>{a.dt}</Text>
+              <Text style={styles.articleDate}>{formatDateFr(a.dt)}</Text>
             </View>
           ))}
         </View>
@@ -91,10 +99,21 @@ export default function MagasinDetail() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   map: { height: 180, margin: 20, borderRadius: 10 },
-  storeInfo: { alignItems: "center", marginBottom: 20 },
+  storeInfo: { alignItems: "center", marginBottom: 10 },
   storeImage: { width: 80, height: 80, borderRadius: 10, marginBottom: 5 },
   storeName: { fontSize: 16, fontWeight: "600" },
   articleCount: { fontSize: 14, color: "#555" },
+
+  addButton: {
+    backgroundColor: "#000",
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginBottom: 20,
+  },
+  addButtonText: { color: "#fff", fontWeight: "600" },
+
   articlesRow: {
     flexDirection: "row",
     flexWrap: "wrap",
