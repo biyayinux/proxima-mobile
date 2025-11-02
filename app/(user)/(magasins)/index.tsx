@@ -1,5 +1,6 @@
 import { useMagasinsUser } from '@/hooks/magasins/magasins-user';
 import { formatDateFr } from '@/utils/format-date';
+import { formatNumber } from '@/utils/format-number';
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { ActivityIndicator, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -20,11 +21,15 @@ export default function MagasinsIndex() {
   return (
     <View style={styles.container}>
       <View style={styles.stats}>
-        <Text style={styles.stat}>{totalMagasins} Magasins</Text>
-        <Text style={styles.stat}>{totalArticles} Articles</Text>
+        <Text style={styles.stat}>
+          {formatNumber(totalMagasins)} {totalMagasins > 1 ? 'Magasins' : 'Magasin'}
+        </Text>
+        <Text style={styles.stat}>
+          {formatNumber(totalArticles)} {totalArticles > 1 ? 'Articles' : 'Article'}
+        </Text>
       </View>
       <Pressable style={styles.createBtn} onPress={() => router.push("/(user)/add-magasin")}>
-        <Text style={styles.createText}>+ Créer un magasin</Text>
+        <Text style={styles.createText}>Créer un magasin</Text>
       </Pressable>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {magasins.map((m: any) => (

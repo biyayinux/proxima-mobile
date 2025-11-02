@@ -1,5 +1,6 @@
 import { useMagasinUser } from "@/hooks/magasins/id-magasin-user";
 import { formatDateFr } from "@/utils/format-date";
+import { formatNumber } from "@/utils/format-number";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -54,18 +55,25 @@ export default function MagasinDetail() {
           style={styles.storeImage}
         />
         <Text style={styles.storeName}>{magasin?.nom}</Text>
-        <Text style={styles.articleCount}>{articles.length} articles</Text>
+        <Text style={styles.articleCount}>
+          {formatNumber(articles.length)} {articles.length === 1 ? 'article' : 'articles'}
+        </Text>
       </View>
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => router.push(`/(user)/(articles)/add-article?id=${id}`)}
       >
-        <Text style={styles.addButtonText}>+ Ajouter un article</Text>
+        <Text style={styles.addButtonText}>Ajouter un article</Text>
       </TouchableOpacity>
       {articles.length > 0 ? (
-        <View style={styles.articlesRow}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 20 }}
+          style={{ marginBottom: 20 }}
+        >
           {articles.map((a: any) => (
-            <View key={a.id} style={styles.articleCard}>
+            <View key={a.id} style={styles.articleCardHorizontal}>
               <Image
                 source={
                   base64ToUri(a.image?.[0])
@@ -76,12 +84,12 @@ export default function MagasinDetail() {
               />
               <Text style={styles.articleTitle}>{a.nom}</Text>
               <Text style={styles.articlePrice}>
-                {a.prix} {a.devise}
+                {formatNumber(a.prix)} {a.devise}
               </Text>
               <Text style={styles.articleDate}>{formatDateFr(a.dt)}</Text>
             </View>
           ))}
-        </View>
+        </ScrollView>
       ) : (
         <View style={styles.noArticles}>
           <Image
@@ -103,7 +111,6 @@ const styles = StyleSheet.create({
   storeImage: { width: 80, height: 80, borderRadius: 10, marginBottom: 5 },
   storeName: { fontSize: 16, fontWeight: "600" },
   articleCount: { fontSize: 14, color: "#555" },
-
   addButton: {
     backgroundColor: "#000",
     padding: 12,
@@ -113,25 +120,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   addButtonText: { color: "#fff", fontWeight: "600" },
-
-  articlesRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    paddingHorizontal: 20,
-  },
-  articleCard: {
-    width: "47%",
+  articleCardHorizontal: {
+    width: 140,
     backgroundColor: "#f9f9f9",
     borderRadius: 10,
     padding: 10,
     alignItems: "center",
-    marginBottom: 10,
+    marginRight: 15,
   },
   articleImage: { width: 80, height: 80, borderRadius: 8, marginBottom: 5 },
   articleTitle: { fontWeight: "500", textAlign: "center" },
   articlePrice: { color: "#333" },
   articleDate: { fontSize: 12, color: "#888" },
+
   noArticles: { alignItems: "center", marginTop: 40 },
   noArticlesImage: { width: 140, height: 140, opacity: 0.7, marginBottom: 8 },
   noArticlesText: { fontSize: 14, color: "#777" },
