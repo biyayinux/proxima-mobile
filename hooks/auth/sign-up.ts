@@ -13,7 +13,7 @@ export function useSignUpWithGoogle() {
 
   const MIDDLEWARE_URL = process.env.EXPO_PUBLIC_MIDDLEWARE_URL;
 
-  // Fonction pour lancer l'inscription via Google
+  // Lancer l'inscription via Google
   const onSignUpWithGoogle = async () => {
     setLoading(true);
     try {
@@ -31,21 +31,22 @@ export function useSignUpWithGoogle() {
       await setActive!({ session: createdSessionId });
       setSignedIn(true);
     } catch (err) {
-      console.log("Erreur Clerk:", err);
+      console.log("Erreur Clerk ", err);
       setLoading(false);
     }
   };
 
-  // Envoi de l'utilisateur au middleware dès qu'il est disponible
+  // Envoi des infos utilisateur (avec photo) au middleware
   useEffect(() => {
     const sendUserToMiddleware = async () => {
       if (!isLoaded || !signedIn || !user) return;
 
       const email = user.emailAddresses?.[0]?.emailAddress;
       const noms = `${user.firstName || ""} ${user.lastName || ""}`.trim();
+      const url_image = user.imageUrl || null; // Photo de profil Google
 
       if (!email || !noms) {
-        console.log("Email manquant");
+        console.log("Email ou nom manquant");
         setLoading(false);
         return;
       }
@@ -54,14 +55,14 @@ export function useSignUpWithGoogle() {
         const response = await fetch(`${MIDDLEWARE_URL}/api/users/sign-up`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, noms }),
+          body: JSON.stringify({ email, noms, url_image }), // On envoie aussi l'image
         });
 
         const data = await response.json();
-        console.log("Réponse middleware ", data);
+        console.log("Réponse middleware:", data);
 
         if (response.ok && (data.status === "created" || data.status === "updated")) {
-          router.replace("/(user)"); // Redirection vers page user
+          router.replace("/(user)");
         } else {
           console.log("Erreur API middleware ", data);
         }

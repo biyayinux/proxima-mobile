@@ -56,7 +56,7 @@ export default function MagasinDetail() {
         />
         <Text style={styles.storeName}>{magasin?.nom}</Text>
         <Text style={styles.articleCount}>
-          {formatNumber(articles.length)} {articles.length === 1 ? 'article' : 'articles'}
+          {formatNumber(articles.length)} {articles.length <= 1 ? 'article' : 'articles'}
         </Text>
       </View>
       <TouchableOpacity
