@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
 async function fetchMagArtAlea(BACKEND_URL: string) {
-  const res = await fetch(`${BACKEND_URL}/api/get-mag-art-alea`);
+  const res = await fetch(`${BACKEND_URL}/api/get-magasins-articles`);
   if (!res.ok) throw new Error((await res.json()).error || 'Erreur serveur');
   return await res.json();
 }
