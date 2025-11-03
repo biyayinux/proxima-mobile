@@ -3,10 +3,19 @@ import { formatDateFr } from "@/utils/format-date";
 import { formatNumber } from "@/utils/format-number";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
-const base64ToUri = (b64?: string | null) => b64 ? `data:image/jpeg;base64,${b64}` : null;
+const base64ToUri = (b64?: string | null) =>
+  b64 ? `data:image/jpeg;base64,${b64}` : null;
 
 export default function MagasinDetail() {
   const { id } = useLocalSearchParams();
@@ -25,7 +34,10 @@ export default function MagasinDetail() {
   const articles = data?.articles || [];
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 100 }}
+    >
       <MapView
         style={styles.map}
         initialRegion={{
@@ -56,7 +68,8 @@ export default function MagasinDetail() {
         />
         <Text style={styles.storeName}>{magasin?.nom}</Text>
         <Text style={styles.articleCount}>
-          {formatNumber(articles.length)} {articles.length <= 1 ? 'article' : 'articles'}
+          {formatNumber(articles.length)}{" "}
+          {articles.length <= 1 ? "article" : "articles"}
         </Text>
       </View>
       <TouchableOpacity
