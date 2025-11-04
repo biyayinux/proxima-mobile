@@ -1,7 +1,5 @@
 import { useSearchArticles } from "@/hooks/search-articles";
 import * as ImagePicker from "expo-image-picker";
-import * as Location from "expo-location";
-import * as Linking from "expo-linking";
 import React, { useState } from "react";
 import { formatNumber } from "@/utils/format-number";
 import {
@@ -14,21 +12,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
-import {
-  ImageIcon,
-  Store,
-  ShoppingCart,
-  MoreHorizontal,
-} from "lucide-react-native";
+import { ImageIcon, Store } from "lucide-react-native";
 
 export default function SearchByImageScreen() {
   const [image, setImage] = useState<string | null>(null);
   const [articles, setArticles] = useState<any[]>([]);
-  const [coords, setCoords] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
 
   const { mutateAsync, isPending, error } = useSearchArticles();
 
@@ -49,48 +37,10 @@ export default function SearchByImageScreen() {
         const data = await mutateAsync(asset.base64!);
         const articlesTrouves = data?.data?.query_results || [];
         setArticles(articlesTrouves);
-
-        if (articlesTrouves.length > 0 && articlesTrouves[0].store) {
-          const { latitude, longitude } = articlesTrouves[0].store;
-          setCoords({
-            latitude: parseFloat(latitude),
-            longitude: parseFloat(longitude),
-          });
-        }
       } catch (err) {
         console.error("Erreur recherche ", err);
+        Alert.alert("Erreur", "Une erreur est survenue lors de la recherche");
       }
-    }
-  };
-
-  // Ouvrir Google Maps avec l’itinéraire vers le magasin
-  const openInGoogleMaps = async (store: {
-    latitude: string;
-    longitude: string;
-  }) => {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission refusée",
-        "Activez la localisation pour voir votre position",
-      );
-      return;
-    }
-
-    const loc = await Location.getCurrentPositionAsync({});
-    const userLat = loc.coords.latitude;
-    const userLng = loc.coords.longitude;
-
-    const destinationLat = parseFloat(store.latitude);
-    const destinationLng = parseFloat(store.longitude);
-
-    const url = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${destinationLat},${destinationLng}&travelmode=driving`;
-
-    const supported = await Linking.canOpenURL(url);
-    if (supported) {
-      await Linking.openURL(url);
-    } else {
-      Alert.alert("Erreur", "Impossible d’ouvrir Google Maps");
     }
   };
 
@@ -118,69 +68,48 @@ export default function SearchByImageScreen() {
           const imageUri = art.photos?.[0]
             ? `data:image/jpeg;base64,${art.photos[0]}`
             : null;
-
           const storeLogo = art.store?.logo
             ? `data:image/jpeg;base64,${art.store.logo}`
             : null;
           return (
-            <TouchableOpacity
-              key={art.article_id}
-              onPress={() => openInGoogleMaps(art.store)}
-              activeOpacity={0.8}
-            >
-              <View style={styles.articleCard}>
-                {imageUri ? (
-                  <Image
-                    source={{ uri: imageUri }}
-                    style={styles.articleImage}
-                  />
-                ) : (
-                  <View
-                    style={[styles.articleImage, { backgroundColor: "#ddd" }]}
-                  />
-                )}
-                <Text style={styles.articleText}>
-                  {art.article_name} {formatNumber(art.price)}{" "}
-                  {art.devise ?? ""}
-                </Text>
-                {art.store && (
-                  <View style={styles.storeInfo}>
-                    {storeLogo ? (
-                      <Image
-                        source={{ uri: storeLogo }}
-                        style={styles.storeLogo}
-                      />
-                    ) : (
-                      <Store size={20} color="#777" />
-                    )}
-                    <Text style={styles.storeName}>{art.store.name}</Text>T
-                  </View>
-                )}
-                <View style={styles.metricsRow}>
-                  {art.similarity !== undefined && (
-                    <Text style={styles.metricText}>
-                      Similarité {(art.similarity * 100).toFixed(0)}%
-                    </Text>
+            <View key={art.article_id} style={styles.articleCard}>
+              {imageUri ? (
+                <Image source={{ uri: imageUri }} style={styles.articleImage} />
+              ) : (
+                <View
+                  style={[styles.articleImage, { backgroundColor: "#ddd" }]}
+                />
+              )}
+              <Text style={styles.articleText}>
+                {art.article_name} {formatNumber(art.price)} {art.devise ?? ""}
+              </Text>
+              {art.store && (
+                <View style={styles.storeInfo}>
+                  {storeLogo ? (
+                    <Image
+                      source={{ uri: storeLogo }}
+                      style={styles.storeLogo}
+                    />
+                  ) : (
+                    <Store size={20} color="#777" />
                   )}
+                  <Text style={styles.storeName}>{art.store.name}</Text>
                 </View>
-              </View>
-            </TouchableOpacity>
+              )}
+              {art.similarity !== undefined && (
+                <Text style={styles.metricText}>
+                  Similarité {(art.similarity * 100).toFixed(0)}%
+                </Text>
+              )}
+              {art.distance_km !== undefined && (
+                <Text style={styles.metricText}>
+                  Distance {parseFloat(art.distance_km).toFixed(2)} km
+                </Text>
+              )}
+            </View>
           );
         })}
       </ScrollView>
-      <View style={styles.mapContainer}>
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: coords?.latitude ?? -4.441931,
-            longitude: coords?.longitude ?? 15.266293,
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.1,
-          }}
-        >
-          {coords && <Marker coordinate={coords} />}
-        </MapView>
-      </View>
     </ScrollView>
   );
 }
@@ -211,18 +140,5 @@ const styles = StyleSheet.create({
   storeInfo: { flexDirection: "row", alignItems: "center", marginTop: 5 },
   storeLogo: { width: 20, height: 20, borderRadius: 10, marginRight: 5 },
   storeName: { fontSize: 12, fontWeight: "500" },
-  metricsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "80%",
-    marginTop: 5,
-  },
-  metricText: { fontSize: 12, color: "#555" },
-  mapContainer: {
-    borderRadius: 12,
-    overflow: "hidden",
-    height: 300,
-    marginTop: 15,
-  },
-  map: { width: "100%", height: "100%" },
+  metricText: { fontSize: 12, color: "#555", marginTop: 5 },
 });

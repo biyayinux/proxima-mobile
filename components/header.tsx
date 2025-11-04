@@ -26,7 +26,10 @@ export default function Header({ title }: { title: string }) {
       {user ? (
         <TouchableOpacity onPress={handleSignOut}>
           {user.imageUrl ? (
-            <Image source={{ uri: user.imageUrl }} style={styles.profileImage} />
+            <Image
+              source={{ uri: user.imageUrl }}
+              style={styles.profileImage}
+            />
           ) : (
             <User size={26} />
           )}
