@@ -59,7 +59,7 @@ export function useSignUpWithGoogle() {
         });
 
         const data = await response.json();
-        console.log("Réponse middleware:", data);
+        console.log("Réponse middleware ", data);
 
         if (
           response.ok &&

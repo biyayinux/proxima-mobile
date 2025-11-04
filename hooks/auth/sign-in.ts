@@ -66,7 +66,7 @@ export function useSignInWithGoogle() {
             await signOut();
             console.log("Session Clerk supprimée pour nouvel utilisateur");
           } catch (err) {
-            console.log("Impossible de supprimer la session Clerk", err);
+            console.log("Impossible de supprimer la session Clerk ", err);
           }
           router.replace("/(auth)/sign-up");
         } else {

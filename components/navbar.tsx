@@ -17,7 +17,7 @@ export default function Navbar() {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.navItem}
-        onPress={() => router.push("/(user)/home")}
+        onPress={() => router.push("/(user)/")}
       >
         <Home size={24} />
         <Text style={styles.label}>Accueil</Text>

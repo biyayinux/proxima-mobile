@@ -1,7 +1,5 @@
 import Articles from "@/components/articles";
-import { useMagArtAlea } from "@/hooks/magasin-article-alea";
-import { formatNumber } from "@/utils/format-number";
-import { MapPin } from "lucide-react-native";
+import { useMagArtAlea } from "@/hooks/all/magasin-article";
 import React from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
@@ -31,10 +29,6 @@ export default function UserHome() {
               <View style={[styles.storeImage, styles.placeholder]} />
             )}
             <Text style={styles.storeName}>{mag.nom ?? " "}</Text>
-            <Text>
-              {formatNumber(mag.total_articles) ?? 0}{" "}
-              {mag.total_articles <= 1 ? "article" : "articles"}
-            </Text>
             <View style={styles.userRow}>
               {mag.user_image ? (
                 <Image
@@ -44,7 +38,6 @@ export default function UserHome() {
               ) : (
                 <View style={[styles.userImage, styles.placeholderSmall]} />
               )}
-              <MapPin size={25} color="gray" />
             </View>
           </View>
         );
