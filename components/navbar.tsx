@@ -11,13 +11,15 @@ export default function Navbar() {
       <TouchableOpacity
         style={styles.navItem}
         onPress={() => router.push("/(user)/search")}
+        activeOpacity={1}
       >
         <Search size={24} />
         <Text style={styles.label}>Recherche</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.navItem}
-        onPress={() => router.push("/(user)/")}
+        onPress={() => router.push("/(user)/home")}
+        activeOpacity={1}
       >
         <Home size={24} />
         <Text style={styles.label}>Accueil</Text>
@@ -25,6 +27,7 @@ export default function Navbar() {
       <TouchableOpacity
         style={styles.navItem}
         onPress={() => router.push("/(user)/(magasins)")}
+        activeOpacity={1}
       >
         <Store size={24} />
         <Text style={styles.label}>Magasins</Text>
@@ -38,8 +41,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     paddingVertical: 50,
-    marginTop: -10,
+    marginTop: -30,
   },
-  navItem: { alignItems: "center" },
-  label: { marginTop: 4, fontSize: 12, color: "#333" },
+  navItem: {
+    alignItems: "center",
+  },
+  label: {
+    marginTop: 4,
+    fontSize: 12,
+    color: "#333",
+  },
 });

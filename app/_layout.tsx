@@ -9,7 +9,8 @@ const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
 const tokenCache = {
   getToken: (key: string) => SecureStore.getItemAsync(key),
-  saveToken: (key: string, value: string) => SecureStore.setItemAsync(key, value),
+  saveToken: (key: string, value: string) =>
+    SecureStore.setItemAsync(key, value),
   clearToken: (key: string) => SecureStore.deleteItemAsync(key),
 };
 
@@ -20,7 +21,11 @@ function RootLayout() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {isSignedIn ? <Stack.Screen name="(user)" /> : <Stack.Screen name="(auth)" />}
+      {isSignedIn ? (
+        <Stack.Screen name="(user)" />
+      ) : (
+        <Stack.Screen name="(auth)" />
+      )}
     </Stack>
   );
 }
@@ -31,7 +36,10 @@ export default function Layout() {
   }
 
   return (
-    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+    <ClerkProvider
+      publishableKey={CLERK_PUBLISHABLE_KEY}
+      tokenCache={tokenCache}
+    >
       <QueryClientProvider client={queryClient}>
         <RootLayout />
       </QueryClientProvider>

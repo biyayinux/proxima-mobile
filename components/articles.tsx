@@ -1,4 +1,3 @@
-// components/Articles.tsx
 import { formatNumber } from "@/utils/format-number";
 import React from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -9,7 +8,6 @@ export default function Articles({ magasins }: { magasins: any[] }) {
 
   return (
     <View>
-      <Text style={styles.sectionTitle}>Nos articles</Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

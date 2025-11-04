@@ -2,18 +2,17 @@ import { useClerk, useUser } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { User } from "lucide-react-native";
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
-export default function Header({ title }: { title: string }) {
-  const { user } = useUser(); // Récupère les infos de l'utilisateur connecté
+export default function Header() {
+  const { user } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
 
-  // Fonction de déconnexion
   const handleSignOut = async () => {
     try {
-      await signOut(); // Déconnecte l’utilisateur
-      router.replace("/(auth)/sign-in"); // Redirige vers la page de connexion
+      await signOut();
+      router.replace("/(auth)/sign-in");
     } catch (err) {
       console.log("Erreur", "Impossible de se déconnecter");
       console.error("Erreur Clerk ", err);
@@ -22,7 +21,11 @@ export default function Header({ title }: { title: string }) {
 
   return (
     <View style={styles.header}>
-      <Text style={styles.title}>{title}</Text>
+      <Image
+        source={require("@/assets/images/logo-proxima.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
       {user ? (
         <TouchableOpacity onPress={handleSignOut}>
           {user.imageUrl ? (
@@ -50,11 +53,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 40,
     marginBottom: 10,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
+  logo: {
+    width: 120,
+    height: 40,
   },
   profileImage: {
     width: 35,

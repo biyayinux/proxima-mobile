@@ -7,7 +7,7 @@ import { StyleSheet, View } from "react-native";
 export default function UserLayout() {
   return (
     <View style={styles.container}>
-      <Header title="Proxima" />
+      <Header />
       <View style={styles.content}>
         <Slot />
       </View>

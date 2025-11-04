@@ -65,7 +65,7 @@ export function useSignUpWithGoogle() {
           response.ok &&
           (data.status === "created" || data.status === "updated")
         ) {
-          router.replace("/(user)");
+          router.replace("/(user)/home");
         } else {
           console.log("Erreur API middleware ", data);
         }

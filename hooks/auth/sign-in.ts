@@ -59,7 +59,7 @@ export function useSignInWithGoogle() {
         console.log("Réponse middleware ", data);
 
         if (response.ok && data.status === "found") {
-          router.replace("/(user)"); // Redirection vers page user
+          router.replace("/(user)/home"); // Redirection vers page user
         } else if (data.status === "not_found") {
           // Utilisateur non trouvé, supprimer session Clerk et rediriger vers sign-up
           try {
