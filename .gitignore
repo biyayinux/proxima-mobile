@@ -30,18 +30,8 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# Fichiers d'environnement locaux
-.env
-.env.*
-*.env
-*.env.*
-
-# Pour Expo
-.env.expo
-.env.expo.local
-.env.next.local
-.env.build
-.env.build.local
+# local env files
+.env*.local
 
 # typescript
 *.tsbuildinfo

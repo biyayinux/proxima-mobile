@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "proxima-mobile",
-    "slug": "proxima-mobile",
+    "name": "proxima",
+    "slug": "proxima",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "proximamobile",
+    "scheme": "proxima",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -19,7 +19,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.biyayinux.proxima"
     },
     "web": {
       "output": "static",
@@ -39,12 +40,18 @@
           }
         }
       ],
-      "expo-secure-store",
-      "expo-web-browser"
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "a2e6c262-2be4-450a-bae9-4a71dde6af1b"
+      }
+    },
+    "owner": "biyayinux"
   }
 }
